@@ -12,7 +12,10 @@ class HtmlWebpackCustomCallbackPlugin {
 
   apply(compiler) {
     compiler.hooks.compilation.tap(PLUGIN_NAME, (compilation) => {
-      compilation.hooks.htmlWebpackPluginAfterHtmlProcessing.tapAsync(
+      const [HtmlWebpackPlugin] = compiler.options.plugins.filter(
+                (plugin) => plugin.constructor.name === 'HtmlWebpackPlugin');
+           
+      HtmlWebpackPlugin.constructor.getHooks(compilation).beforeEmit.tapAsync(
         PLUGIN_NAME,
         (data, cb) => {
           data.html = this.invokeCallback(data.html);
